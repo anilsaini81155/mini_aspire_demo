@@ -13,6 +13,46 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::prefix('/miniaspireapp/user')->middleware(['AuthenticateClientRequest'])->group(function () {
+    
+    Route::post('/CreateLoanRequest', 'LoanController@createLoanRequest');
+    Route::get('/GetLoanRepaymentSchedule', 'LoanController@getLoanRepaymentSchedule');
+    Route::patch('/PayEmi', 'LoanController@payEmi');
+    Route::get('/GetLoanDetails', 'LoanController@getLoanDetails');
+    
 });
+
+Route::prefix('/miniaspireapp/admin')->middleware(['AuthenticateClientRequest'])->group(function () {
+    
+    Route::post('/CreateLoanRequest', 'AdminController@createLoanRequest');
+    Route::post('/ApproveLoan', 'AdminController@approveLoan');
+    Route::get('/GetLoanRepaymentSchedule', 'AdminController@getLoanRepaymentSchedule');
+    Route::patch('/PayEmi', 'AdminController@payEmi');
+    Route::get('/GetLoanDetails', 'AdminController@getLoanDetails');
+    
+});
+
+Route::prefix('/miniaspireapp/open-call')->group(function () {
+    Route::get('/login', 'AdminController@login');
+    Route::get('/signup', 'AdminController@signup');
+});
+
+
+
+// createUser
+// 	->token
+// login
+// 	->token
+// createLoanRequest
+//     ->
+// approveLoan
+// 	->
+// viewPendingLoans	
+
+// viewALlActiveLoans
+//     ->
+// getLoanDetails
+// 	->
+// getLoanRepaymentSchedule
+// 	->
+// payEmi
