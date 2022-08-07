@@ -25,7 +25,7 @@ class AdminController
 
     public function createLoanRequest(Requests\CreateLoanRequest $a){
 
-        $result = $this->loanService->processLoansRequest($a->all(),'user');
+        $result = $this->loanService->processLoansRequest($a->all(),Config('commonconfig.user_type.User'));
 
         if ($result == false) {
             return response()->json([
@@ -41,7 +41,7 @@ class AdminController
     }
 
     public function getLoanRepaymentSchedule(Requests\GetLoanRepaymentScheduleRequest $a){
-        
+
         $this->emiService->getDetailsOfLoanRepaymentSchedule($a);
     }
     

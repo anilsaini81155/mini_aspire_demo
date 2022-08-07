@@ -76,9 +76,7 @@ class AdminController
             'mobile_no' => $a->mobile_no,
             'password' =>  Crypt::encrypt($a->password),
             'max_no_loan' => Config('commonconfig.max_no_of_loan'),
-            'type' => 'User',
-            'status' => 'Active',
-            'is_deleted' => 'False',
+            'type' => Config('commonconfig.user_type.User'),
             'created_at' => now()
         ];
 
@@ -110,7 +108,7 @@ class AdminController
 
     public function createLoanRequest(Requests\CreateLoanRequest $a){
 
-        $result = $this->loanService->processLoansRequest($a->all(),'user');
+        $result = $this->loanService->processLoansRequest($a->all(),Config('commonconfig.user_type.User'));
 
         if ($result == false) {
             return response()->json([

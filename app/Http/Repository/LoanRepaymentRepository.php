@@ -2,12 +2,12 @@
 
 namespace App\Http\Repository;
 
-use App\Models\User;
+use App\Models\LoanRepayment;
 
 
-class UserRepository  extends BaseRepository{
+class LoanRepaymentRepository  extends BaseRepository{
 
-    public function __construct(User $model) {
+    public function __construct(LoanRepayment $model) {
         parent::__construct($model);
     }
 
@@ -16,14 +16,9 @@ class UserRepository  extends BaseRepository{
         return  $this->model->where($data)->first();
     }
 
-    public function getUserSpecifiLoanDetails(int $loanId){
-
-        return  $this->model
-            ->select('sys_user.name', 'sys_user.loan_id','sys_user.contact_no','loan.amount','loan.tenure','loan.emi_amount')
-            ->join('loan', 'loan.user_id', '=', 'sys_user.id')
-            ->where('loan.id', $loanId)
-            ->first();
-
+    public function getSchedule(int $loan_id)
+    {
+        return  $this->model->where('loan_id', $loan_id)->get();
     }
 
 }

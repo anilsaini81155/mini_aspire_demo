@@ -11,7 +11,7 @@ class EmiService
     protected $loanRepo;
     protected $repaymentRepo;
 
-    public function __construct(Repository\LoanRepository $loanRepo , Repository\RepaymentRepository $repaymentRepo)
+    public function __construct(Repository\LoanRepository $loanRepo , Repository\LoanRepaymentRepository $repaymentRepo)
 
     {
         $this->loanRepo = $loanRepo;
@@ -22,14 +22,13 @@ class EmiService
 
     public function getDetailsOfLoanRepaymentSchedule($a){
 
-        $emiRecords = $this->loanRepaymentRepo->getSchedule($a->loan_id);
+        $emiRecords = $this->repaymentRepo->getSchedule($a->loan_id);
 
         if ($emiRecords->isEmpty()) {
             return  false;
         }
 
         return  $emiRecords->all();
-
 
     }
     
@@ -40,7 +39,7 @@ class EmiService
 
         try {
 
-            $emiRecord = $this->loanRepaymentRepo->select($a->emi_id);
+            $emiRecord = $this->repaymentRepo->select($a->emi_id);
             
             if ($emiRecord == false) {
                 return false;

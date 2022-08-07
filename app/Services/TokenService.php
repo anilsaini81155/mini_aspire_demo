@@ -42,7 +42,7 @@ class TokenService
             $key = hash('sha256', $data->config);
             $curr_time= now() ;
             $request = [
-                'contact_no' => $user->contact_no,
+                'mobile_no' => $user->mobile_no,
                 'id' => $user->id,
                 'created_at' => $curr_time
             ];

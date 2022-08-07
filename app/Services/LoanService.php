@@ -10,13 +10,12 @@ use App\Http\Repository\LoanRepository;
 class LoanService
 {
     
-    protected $tokenRepo;
     protected $userRepo;
 
-    public function __construct(Repository\TokenRepository $tokenRepo,Repository\UserRepository $userRepo)
+    public function __construct(Repository\UserRepository $userRepo , Repository\LoanRepaymentRepository $loanRepayment)
     {
-        $this->tokenRepo = $tokenRepo;
         $this->userRepo = $userRepo;
+        $this->loanRepayment = $loanRepayment;
     }
 
     public function processLoansRequest($a,$user_type){
@@ -25,7 +24,7 @@ class LoanService
             'user_id' => $a['user_id'], //apend the user id from the  middleware
             'loan_amount' => $a['loan_amount'],
             'loan_tenure' => $a['loan_tenure'],
-            'status' =>  'Pending', //make config driven 
+            'status' =>  Config('commonconfig.loan_status.Pending'),
             'type' => $user_type,
             'created_at' => now()
         ];
@@ -54,7 +53,7 @@ class LoanService
             $emiAmount = ($loanDetails->loan_amount / ($loanDetails->loan_tenure * 4));
 
             $updateLoanData = [
-                'status' => 'Approved',
+                'status' => Config('commonconfig.loan_status.Approved'),
                 'updated_at' => now(),
                 'emi_amount' => $emiAmount
             ];    
@@ -90,7 +89,6 @@ class LoanService
         }
 
     }
-
 
 
     public function getLoanDetails($a){

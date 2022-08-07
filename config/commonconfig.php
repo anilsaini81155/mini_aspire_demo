@@ -15,9 +15,11 @@ return[
         'Pending' => 'Pending',
         'Approved' => 'Approved',
         'Closed' => 'Closed'
-    ]
+    ],
+    'user_type' => [
+        'User' => 'User',
+        'Admin' => 'Admin'
+    ],
 ];
-
-
 
 ?>
