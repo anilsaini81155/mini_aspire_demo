@@ -22,6 +22,7 @@ Route::prefix('/miniaspireapp/user')->middleware(['AuthenticateClientRequest'])-
     
 });
 
+
 Route::prefix('/miniaspireapp/admin')->middleware(['AuthenticateClientRequest'])->group(function () {
     
     Route::post('/CreateLoanRequest', 'AdminController@createLoanRequest');
@@ -32,27 +33,8 @@ Route::prefix('/miniaspireapp/admin')->middleware(['AuthenticateClientRequest'])
     
 });
 
+
 Route::prefix('/miniaspireapp/open-call')->group(function () {
     Route::get('/login', 'AdminController@login');
-    Route::get('/signup', 'AdminController@signup');
+    Route::post('/signup', 'AdminController@signup');
 });
-
-
-
-// createUser
-// 	->token
-// login
-// 	->token
-// createLoanRequest
-//     ->
-// approveLoan
-// 	->
-// viewPendingLoans	
-
-// viewALlActiveLoans
-//     ->
-// getLoanDetails
-// 	->
-// getLoanRepaymentSchedule
-// 	->
-// payEmi

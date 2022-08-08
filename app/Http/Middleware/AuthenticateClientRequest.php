@@ -29,7 +29,7 @@ class AuthenticateClientRequest
                 ], 403);
             }else{
                 
-                $request->merge(['user_id' => $response->user_id]);
+                $request->merge(['user_id' => $response['user_id'] ,'user_type' => $response['user_type']]);
             }
         } else {
             return response()->json([

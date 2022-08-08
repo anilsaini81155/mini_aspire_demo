@@ -11,7 +11,7 @@ use App\Http\Repository\LoanRepository;
 use App\Services\EmiService;
 use App\Services\LoanService;
 
-class AdminController
+class LoanController
 {
 
     protected $loanService;
@@ -29,30 +29,71 @@ class AdminController
 
         if ($result == false) {
             return response()->json([
-                "message" => "Record not found"
+                "message" => "User Loan Not Created"
             ], 404);
         }
         $result = $result->toJson(JSON_PRETTY_PRINT);
         
         return response()->json([
-            "message" => "Data Fetched Successfully" , "data" => $result
+            "message" => "User Loan Created Successfully.Please find loan details." , "data" => $result
         ], 200);
             
     }
 
     public function getLoanRepaymentSchedule(Requests\GetLoanRepaymentScheduleRequest $a){
 
-        $this->emiService->getDetailsOfLoanRepaymentSchedule($a);
+        $result = $this->emiService->getDetailsOfLoanRepaymentSchedule($a);
+
+        if($result == false){
+            return response()->json([
+                "message" => "User Loan EMI Details Not Found"
+            ], 404);
+
+        }
+
+        $result = $result->toJson(JSON_PRETTY_PRINT);
+        
+        return response()->json([
+            "message" => "User Loan EMI Details Fetched. Successfully." , "data" => $result
+        ], 200);
     }
     
     public function payEmi(Requests\PayEmiRequest $a){
 
-        $this->emiService->processLoanEmi($a);
+       $result = $this->emiService->processLoanEmi($a);
+
+        if($result['status'] == false){
+            return response()->json([
+                "message" => $result['message']
+            ], 202);
+        }
+
+      return response()->json([
+        "message" => $result['message']], 200);
     }
 
     public function getLoanDetails(Requests\GetLoanDetailsRequest $a){
 
-        $this->loanService->getLoanDetails($a);
+        $result = $this->loanService->getLoanDetails($a);
+
+        if($result == false){
+            return response()->json([
+                "message" => "User Loan Details Not Found"
+            ], 404);
+
+        }
+
+        if($a->user_id != $result->user_id){
+            return response()->json([
+                "message" => "Other User Loan Cannot Be fetched."
+            ], 403);
+        }
+
+        $result = $result->toJson(JSON_PRETTY_PRINT);
+        
+        return response()->json([
+            "message" => "User Loan Details Fetched. Successfully." , "data" => $result
+        ], 200);
     }   
    
 }

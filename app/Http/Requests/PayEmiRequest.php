@@ -16,7 +16,8 @@ class PayEmiRequest extends FormRequest{
         return [
             "loan_id" => "required|numeric",
             "emi_amount" => "required|numeric",
-            "emi_id" => "required|numeric"
+            "emi_id" => "required|numeric",
+            "user_id" => "nullable|numeric"
         ];
     }
     

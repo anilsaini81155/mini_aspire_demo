@@ -7,7 +7,7 @@ use App\Http\Requests;
 use App\Services;
 use App\Models\User;
 use Illuminate\Support\Facades\Crypt;
-use App\Http\Repository\UserRepository;
+use App\Http\Repository;
 
 class AdminController
 {
@@ -17,11 +17,12 @@ class AdminController
     protected $emiService;
 
 
-    public function __construct(Services\LoanService $loanService , Services\TokenService $tokenService , Services\EmiService $emiService)
+    public function __construct(Services\LoanService $loanService , Services\TokenService $tokenService , Services\EmiService $emiService ,Repository\UserRepository $userRepo)
     {
         $this->loanService = $loanService;
         $this->tokenService = $tokenService;
         $this->emiService =$emiService;
+        $this->userRepo = $userRepo;
     }
 
     public function login(Request $a){
@@ -67,6 +68,7 @@ class AdminController
 
         $a->validate([
             "name" => ["required"],
+            "email" => ["required", "email"],
             "mobile_no" => ["required", "numeric", "digits:10", "regex:/^[7-9][0-9]{9}$/"],
             "password" => ["required", "string", "max:16"]
         ]);
@@ -74,6 +76,7 @@ class AdminController
         $insertData =  [
             'name' => $a->name,
             'mobile_no' => $a->mobile_no,
+            'email' => $a->email,
             'password' =>  Crypt::encrypt($a->password),
             'max_no_loan' => Config('commonconfig.max_no_of_loan'),
             'type' => Config('commonconfig.user_type.User'),
@@ -81,12 +84,11 @@ class AdminController
         ];
 
         
-        $result = $this->repo->setRepo(UserRepository::class)->fetch()
-                  ->create($insertData);    
+        $result =  $this->userRepo->create($insertData);  
 
         if ($result == false) {
             return response()->json([
-                "message" => "User not found"
+                "message" => "User not created"
             ], 404);
         }
         
@@ -102,7 +104,23 @@ class AdminController
             "loan_id" => ["required", "numeric"]
         ]);
 
-        $this->loanService->approveUserLoansRequest($a->all());
+        if($a->user_type != Config('commonconfig.user_type.Admin')){
+            return response()->json([
+                "message" => "UnAuthorised Access Found." 
+            ], 403);
+        }
+
+        $result = $this->loanService->approveUserLoansRequest($a->all());
+
+        if ($result == false) {
+            return response()->json([
+                "message" => "Loan not approved, please check the logs."
+            ], 404);
+        }
+
+        return response()->json([
+            "message" => "Loan Approved Successfully." 
+        ], 200);
 
     }
 
@@ -112,30 +130,68 @@ class AdminController
 
         if ($result == false) {
             return response()->json([
-                "message" => "Record not found"
+                "message" => "User Loan Not Created"
             ], 404);
         }
         $result = $result->toJson(JSON_PRETTY_PRINT);
         
         return response()->json([
-            "message" => "Data Fetched Successfully" , "data" => $result
+            "message" => "User Loan Created Successfully.Please find loan id." , "data" => $result
         ], 200);
     }
 
     public function getLoanRepaymentSchedule(Requests\GetLoanRepaymentScheduleRequest $a){
 
-        $this->emiService->getDetailsOfLoanRepaymentSchedule($a);
+        $result =  $this->emiService->getDetailsOfLoanRepaymentSchedule($a);
+
+        if($result == false){
+            return response()->json([
+                "message" => "User Loan EMI Details Not Found"
+            ], 404);
+
+        }
+
+        $result = $result->toJson(JSON_PRETTY_PRINT);
+        
+        return response()->json([
+            "message" => "User Loan EMI Details Fetched. Successfully." , "data" => $result
+        ], 200);
+
     }
 
     public function payEmi(Requests\PayEmiRequest $a){
 
-        $this->emiService->processLoanEmi($a);
+      $result = $this->emiService->processLoanEmi($a);
+
+      if($result['status'] == false){
+            return response()->json([
+                "message" => $result['message']
+            ], 202);
+      }
+
+      return response()->json([
+        "message" => $result['message']], 200);
         
     }
 
     public function getLoanDetails(Requests\GetLoanDetailsRequest $a){
 
-        $this->loanService->getLoanDetails($a);
+        $result = $this->loanService->getLoanDetails($a);
+
+        if($result == false){
+            return response()->json([
+                "message" => "User Loan Details Not Found"
+            ], 404);
+
+        }
+
+        $result = $result->toJson(JSON_PRETTY_PRINT);
+        
+        return response()->json([
+            "message" => "User Loan Details Fetched. Successfully." , "data" => $result
+        ], 200);
+
+
     }
    
 }

@@ -19,7 +19,6 @@ class EmiService
     }
 
   
-
     public function getDetailsOfLoanRepaymentSchedule($a){
 
         $emiRecords = $this->repaymentRepo->getSchedule($a->loan_id);
@@ -28,7 +27,7 @@ class EmiService
             return  false;
         }
 
-        return  $emiRecords->all();
+        return  $emiRecords;
 
     }
     
@@ -42,18 +41,30 @@ class EmiService
             $emiRecord = $this->repaymentRepo->select($a->emi_id);
             
             if ($emiRecord == false) {
-                return false;
+                return ['status' => false , 'message' => 'EMI Not found'];
             }
-
-            if ($emiRecord->emi_amount !== $a->emi_amount) {
-                return  false;
+            
+            if ($emiRecord->emi_amount !== $a->emi_amount && $emiRecord->emi_amount >= $a->emi_amount) {
+                return ['status' => false , 'message' => 'EMI Amount Not Matched || Partial EMI not allowed'];
             }
 
             if ($emiRecord->status == config('commonconfig.emi_status.Paid')) {
-                return false;
+                return ['status' => false , 'message' => 'EMI Already Paid'];
             }
 
-            $emiUpdateCount =  $this->repaymentRepo->update(['emi_status' => config('commonconfig.emi_status.Paid')], $a->emi_id);
+            if($a->emi_amount > $emiRecord->emi_amount ){
+
+                $emiUpdateCount =  $this->repaymentRepo->update(['emi_status' => config('commonconfig.emi_status.Paid'),
+                    'amount_received' => $a->emi_amount ,'post_payment_principal_outstanding' => $emiRecord->principal_outstanding - ($a->emi_amount - $emiRecord->emi_amount)
+                ], $a->emi_id);
+                
+            }else{
+
+                $emiUpdateCount =  $this->repaymentRepo->update(['emi_status' => config('commonconfig.emi_status.Paid'),
+                   'amount_received' => $a->emi_amount  , 'post_payment_principal_outstanding' => $emiRecord->principal_outstanding ], $a->emi_id);
+
+            }
+
             
             if ($emiUpdateCount == 0) {
                 throw new \Exception("Updation failed");
@@ -71,15 +82,15 @@ class EmiService
 
             DB::commit();
 
-            return  false;
+            return ['status' => true , 'message' => $msg];
+
         } catch (\Exception $ex) {
             
             DB::rollback();
             Log::info($ex);
         }
 
-        return  false;
-
+        return ['status' => true , 'message' => $ex->getMessage()];
 
     }
 }

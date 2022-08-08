@@ -68,10 +68,12 @@ CREATE TABLE `loan` (
 CREATE TABLE `loan_repayment` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `emi_amount` float(12,4) DEFAULT NULL,
+  `amount_received` float(12,4) DEFAULT NULL,
   `emi_date` date NOT NULL,
   `emi_status` enum('Paid','UnPaid') NOT NULL DEFAULT 'UnPaid',
    `loan_id` int(11) NOT NULL,
    `principal_outstanding` float(12,4) DEFAULT NULL,
+   `post_payment_principal_outstanding` float(12,4) DEFAULT NULL,
    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
    PRIMARY KEY (`id`),

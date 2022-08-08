@@ -15,7 +15,8 @@ class CreateLoanRequest extends FormRequest{
     {
         return [
             "loan_amount" => "required|numeric",
-            "loan_tenure" => "required|numeric"
+            "loan_tenure" => "required|numeric",
+            "user_id" => "nullable|numeric"
         ];
     }
     

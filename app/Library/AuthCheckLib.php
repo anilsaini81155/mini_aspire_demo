@@ -41,7 +41,7 @@ class AuthCheckLib implements AuthCheck
         }
 
         if (Carbon::now()->format('Y-m-d H:i:s') < Carbon::parse($getTokenDeatils->expires_at)->format('Y-m-d H:i:s')) {
-            return ['user_id' => $getTokenDeatils->user_id];
+            return ['user_id' => $getTokenDeatils->user_id , 'user_type' => $getUserDeatils->user_type];
         } else {
             
             return false;

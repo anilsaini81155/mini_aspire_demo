@@ -16,4 +16,14 @@ class LoanRepository  extends BaseRepository{
         return  $this->model->where($data)->first();
     }
 
+
+    // public function getUserSpecifiLoanDetails(int $loanId){
+        
+    //     return  $this->model->join('sys_user', 'loan.user_id', '=', 'sys_user.id')
+    //         ->select('sys_user.name','sys_user.loan_id','sys_user.contact_no','loan.amount','loan.tenure','loan.emi_amount')
+    //         ->where('loan.id', $loanId)
+    //         ->get();
+
+    // }
+
 }
