@@ -41,7 +41,7 @@ class AdminTest extends TestCase
         $this->withoutExceptionHandling();
         $response = $this->withHeaders([
             'Bearer Token' => '12dasdsajnad34dasdsajna',
-        ])->post('/api//miniaspireapp/admin/CreateLoanRequest', [
+        ])->post('/api/miniaspireapp/admin/CreateLoanRequest', [
             'loan_amount' => 15000,
             'loan_tenure' => 3,
             'user_id' => 1
@@ -54,7 +54,7 @@ class AdminTest extends TestCase
         $this->withoutExceptionHandling();
         $response = $this->withHeaders([
             'Bearer Token' => '12dasdsajnad34dasdsajna',
-        ])->post('/api//miniaspireapp/admin/ApproveLoan', [
+        ])->post('/api/miniaspireapp/admin/ApproveLoan', [
             'loan_id' => 10
         ]);
         $response->assertStatus(404);   
@@ -66,7 +66,7 @@ class AdminTest extends TestCase
         $this->withoutExceptionHandling();
         $response = $this->withHeaders([
             'Bearer Token' => '12dasdsajnad34dasdsajna',
-        ])->get('/api//miniaspireapp/admin/GetLoanRepaymentSchedule', [
+        ])->get('/api/miniaspireapp/admin/GetLoanRepaymentSchedule', [
             'loan_id' => 10
         ]);
         $response->assertStatus(404);
@@ -77,7 +77,7 @@ class AdminTest extends TestCase
         $this->withoutExceptionHandling();
         $response = $this->withHeaders([
             'Bearer Token' => '12dasdsajnad34dasdsajna',
-        ])->post('/api//miniaspireapp/admin/PayEmi', [
+        ])->post('/api/miniaspireapp/admin/PayEmi', [
             'loan_id' => 10,
             'emi_id' => 11,
             'emi_amount' => 500,
@@ -91,7 +91,7 @@ class AdminTest extends TestCase
         $this->withoutExceptionHandling();
         $response = $this->withHeaders([
             'Bearer Token' => '12dasdsajnad34dasdsajna',
-        ])->get('/api//miniaspireapp/admin/GetLoanDetails', [
+        ])->get('/api/miniaspireapp/admin/GetLoanDetails', [
             'loan_id' => 10
         ]);
         $response->assertStatus(404);
